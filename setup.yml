@@ -3,17 +3,16 @@
   hosts: ec2_instances
   become: yes
   tasks:
-    - name: Install Docker
-      apt:
-        name: docker.io
-        state: present
-        update_cache: yes
 
-    - name: Install Docker Compose
-      apt:
-        name: docker-compose
+    - name: Install Docker
+      yum:
+        name: docker
         state: present
-        update_cache: yes
+        
+    #- name: Install Docker Compose
+    #  yum:
+    #    name: docker-compose
+    #    state: present
 
     - name: Start Docker
       service:
@@ -21,14 +20,7 @@
         state: started
         enabled: yes
 
-    - name: Add user to docker group
-      user:
-        name: "{{ ansible_user }}"
-        groups: docker
-        append: yes
+    - name: Add current user to Docker group
+      command: usermod -aG docker ec2-user
 
-    -name: Install Python
-      apt:
-        name: python3
-        state: present
-        update_cache: yes
+
